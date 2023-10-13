@@ -108,7 +108,7 @@ comment "Launch rocket init code";
 		['M9_tmpREfnc_svmspc'] call M9SD_fnc_REinit2_V3;
 		waitUntil {!isNil 'RE2_M9_tmpREfnc_svmspc'};
 
-				
+		if (isnil 'M9SD_rocketDebugMode') then {M9SD_rocketDebugMode = 0;};
 
 		comment "set the view distance (required or else script will bug out)";
 
@@ -637,7 +637,6 @@ comment "Launch rocket init code";
 					comment "[_rocketObj_stage_01, _vel] remoteExec ['setVelocityModelSpace'];";
 					[[_rocketObj_stage_01, _vel], 'RE2_M9_tmpREfnc_svmspc', 0] call M9SD_fnc_RE2_V3;
 
-					
 
 
 					comment "Make the rocket spin around.";
@@ -736,6 +735,7 @@ comment "Launch rocket init code";
 			params [['_rocket', objNull]];
 			if (isNull _rocket) exitWith {};
 			if (_rocket getVariable ['isLaunching', false]) exitWith {};
+			if (_rocket getVariable ['isLanding', false]) exitWith {};
 			_rocket setVariable ['isLaunching', true, true];
 			playSound3D ["A3\Sounds_F\ambient\battlefield\battlefield_jet3.wss", _rocket, false, getPosATL _rocket, 4, 2, 6400];
 			uiSleep 3;

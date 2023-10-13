@@ -122,7 +122,7 @@ comment "Land rocket init code";
 			for '_i' from -1 to 64 do {cursorObject setObjectTextureGlobal [_x,''];};
 		";
 
-		M9SD_rocketDebugMode = 1;
+		if (isnil 'M9SD_rocketDebugMode') then {M9SD_rocketDebugMode = 0;};
 
 		private _objVD = getobjectviewdistance # 0;
 		private _vd = viewDistance;
@@ -264,6 +264,7 @@ comment "Land rocket init code";
 
 			_pos set [2, ( _pos # 2 ) + 4000];
 			private _rocketBaseObj = createVehicle ['Land_Pod_Heli_Transport_04_bench_F', _pos, [], 0, "CAN_COLLIDE"];
+			_rocketBaseObj setVariable ['isLanding', true, true];
 			_rocketBaseObj setPosATL _pos;
 			_rocketBaseObj allowDamage false;
 			rocketBaseObj = _rocketBaseObj;
@@ -344,7 +345,7 @@ comment "Land rocket init code";
 
 		comment "Initiate engine/ignition VFX/SFX.";
 
-		M9SD_fnc_rocketIgnition = {
+		M9SD_fnc_rocketIgnition_landingBurn = {
 
 			private _camShake = {
 				private _rocketPos = getPos _this;
@@ -909,6 +910,12 @@ comment "Land rocket init code";
 				};
 				
 				comment "systemChat 'Engines no longer firing.';";
+				_rocketObj_stage_01 spawn {
+					sleep 60;
+					if (!isNull _this) then {
+						_this setVariable ['isLanding', false, true];
+					};
+				};
 			};
 		};
 
@@ -1009,8 +1016,8 @@ comment "Land rocket init code";
 		comment "Control the timing of the script execution.";
 
 		M9SD_fnc_initRocketSequence_landing = {
-			if ((call M9SD_fnc_countRockets > 0) && (M9SD_rocketDebugMode != 1)) exitWith {
-				systemChat "Cannot spawn multiple rockets.";
+			if ((call M9SD_fnc_countRockets > 2) && (M9SD_rocketDebugMode != 1)) exitWith {
+				systemChat "ROCKET SCRIPT: Cannot spawn more than 3 rockets at a time!";
 				playSound 'AddItemFailed';
 			};
 
@@ -1042,7 +1049,7 @@ comment "Land rocket init code";
 				};
 			};
 			waitUntil {(!isTouchingGround _rocket)};
-			_rocket call M9SD_fnc_rocketIgnition;
+			_rocket call M9SD_fnc_rocketIgnition_landingBurn;
 			_rocket call M9SD_fnc_rocketDescent;
 			_rocket call M9SD_fnc_rocketSpin;
 			comment "uiSleep 124;";

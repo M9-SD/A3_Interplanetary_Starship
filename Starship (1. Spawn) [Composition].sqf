@@ -29,6 +29,7 @@ comment "Spawn rocket init code";
 
 	M9SD_rocketSpawnComp_version = '1.0.0 Beta';
 	M9SD_debug = true;
+	if (isnil 'M9SD_rocketDebugMode') then {M9SD_rocketDebugMode = 0;};
 
 	comment "Place the rocket down at the given module location.";
 
@@ -111,7 +112,27 @@ comment "Spawn rocket init code";
 		};
 	};
 
+	
+	M9SD_fnc_countRockets = {
+		comment "Figure out how many rockets are alive.";
+		if (isNil 'M9SD_rocketComps') exitWith {0};
+		private _counter = 0;
+		{
+			private _rocketObj = _x select 0;
+			if ((!isNull _rocketObj) && (alive _rocketObj)) then {
+				_counter = _counter + 1;
+			};
+		} forEach M9SD_rocketComps;
+		_counter;
+	};
+
+
 	M9SD_fnc_rocketAssembly = {
+
+		if ((call M9SD_fnc_countRockets > 2) && (M9SD_rocketDebugMode != 1)) exitWith {
+			systemChat "ROCKET SCRIPT: Cannot spawn more than 3 rockets at a time!";
+			playSound 'AddItemFailed';
+		};
 		(format ['ROCKET SCRIPT: Spawning rocket...']) call M9SD_fnc_sysChat;
 		private _pos = _this;
 
