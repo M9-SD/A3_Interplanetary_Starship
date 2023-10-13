@@ -182,7 +182,7 @@ deleteVehicle this;
 ";
 
 
-(screenToWorld [0.5,0.5]) spawn M9SD_fnc_rocketAssembly;
+
 
 
 
@@ -215,3 +215,15 @@ comment "
 	[rocketFuselage, 29] remoteExec ['setObjectScale'];
 
 ";
+
+"
+(screenToWorld [0.5,0.5]) spawn M9SD_fnc_rocketAssembly;
+
+(getpos this) spawn M9SD_fnc_rocketAssembly;
+
+";
+
+
+
+deleteVehicle this;
+(screenToWorld getMousePosition) spawn M9SD_fnc_rocketAssembly;
