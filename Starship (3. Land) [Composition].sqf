@@ -389,7 +389,7 @@ comment "Land rocket init code";
 				private _object = _this;
 				_object spawn {
 					private _pos = getPosATL _this;
-					while {alive _this} do {
+					while {((alive _this) && (!isTouchingGround _this) && (!underwater _this))} do {
 						playSound3D ["A3\Missions_F_EPA\data\sounds\burning_car_loop1.wss", _this, false, getPosATL _this, 3.5, 1, 12800];
 						uiSleep 4.1;
 					};
